@@ -1,7 +1,9 @@
+package lab3;
+
 public class Stack {
     private int[] arr;
     private int size, cur_size, pop_pos, push_pos;
-    Stack(int size)
+    public Stack(int size)
     {
         arr = new int[size];
         this.size = size;
