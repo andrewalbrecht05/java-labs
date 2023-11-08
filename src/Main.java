@@ -1,31 +1,29 @@
 import java.util.Scanner;
-import lab1.*;
-import lab3.*;
 public class Main {
     public static void main(String[] args) {
-        Scanner scmain = new Scanner(System.in);
-        System.out.println("1. Lab1");
-        System.out.println("2. Lab3");
-        System.out.println("-1. Вийти");
+        Game game = new Game();
+        game.start();
+        /*
+        GAME CLASS
+            Player
+            Task
+            Start
+            Buy extra xp or xp amplifier
+        PLAYER CLASS
+            Money
+            XP
+            Increase money
+            Increase xp
+        LEVEL CLASS
+            Current level
+            Is level completed
+            Generate new Task
+         TASK CLASS
+            reward money
+            reward xp
+            random task( guess number )
 
-        while(true){
-            System.out.println("Введіть номер операції: ");
-
-            int num = scmain.nextInt();
-
-            if( num == 1 ) {
-                lab1.PrimeIndices.reset();
-            }
-            else if( num == 2 ) {
-                lab3.Execution.operations();
-            }
-            else if( num == -1 ) {
-                break;
-            }
-            else {
-                System.out.println("Такої операції не існує!");
-            }
-        }
+         */
 
     }
 }
