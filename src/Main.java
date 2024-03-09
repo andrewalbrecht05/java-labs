@@ -1,4 +1,8 @@
-import java.util.HashSet;
+import Instruments.IMInstrument;
+import Instruments.Piano;
+import Instruments.Synthesizer;
+import Instruments.Violin;
+
 import java.util.Scanner;
 
 /**
@@ -24,12 +28,11 @@ public class Main {
      * @param instrument Обраний музичний інструмент.
      */
     static public void process(Musician musician, IMInstrument instrument) {
-        //boolean is = musician.addInstrument(instrument);
         if (!musician.contains(instrument)) {
             System.out.println("Музикант успішно опанував гру на фортепіано!");
             musician.addInstrument(instrument);
         } else {
-            System.out.println("Музикант вже вміє грати на фортепіано!");
+            System.out.println("Музикант вже вміє грати на цьому інструменті!");
         }
         System.out.println(musician.size());
     }
@@ -39,13 +42,6 @@ public class Main {
         Musician musician = new Musician();
         get_help();
 
-        HashSet<Integer> a = new HashSet<>();
-
-        a.add(1);
-        a.add(1);
-        a.add(1);
-        a.add(2);
-        System.out.println(a.size());
         while (true) {
             String input = sc.nextLine();
             label:

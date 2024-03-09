@@ -1,26 +1,27 @@
-import java.util.HashSet;
+import Instruments.IMInstrument;
+
+import java.util.HashMap;
 
 /**
  * Клас, що представляє музиканта, який може грати на різних музичних інструментах.
  */
 public class Musician {
-    private HashSet<IMInstrument> instruments;
+    private final HashMap<String, IMInstrument> instruments;
 
     /**
      * Конструктор класу. Ініціалізує колекцію для зберігання музичних інструментів.
      */
     public Musician() {
-        this.instruments = new HashSet<>();
+        this.instruments = new HashMap<>();
     }
 
     /**
      * Додає музичний інструмент до колекції інструментів музиканта.
      *
      * @param instrument Новий музичний інструмент.
-     * @return true, якщо інструмент доданий успішно, false - якщо він вже існує у колекції.
      */
-    public boolean addInstrument(IMInstrument instrument) {
-        return instruments.add(instrument);
+    public void addInstrument(IMInstrument instrument) {
+        instruments.put(instrument.getClass().getName(),instrument);
     }
 
     /**
@@ -39,7 +40,7 @@ public class Musician {
      * @return true, якщо музикант володіє цим інструментом, false - інакше.
      */
     public boolean contains(IMInstrument instrument) {
-        return instruments.contains(instrument);
+        return instruments.containsKey(instrument.getClass().getName());
     }
 
     /**
@@ -50,7 +51,7 @@ public class Musician {
         if (instruments.isEmpty()) {
             System.out.println("Музикант не вміє грати...");
         } else {
-            for (IMInstrument instrument : instruments) {
+            for (IMInstrument instrument : instruments.values()) {
                 instrument.play();
             }
         }
