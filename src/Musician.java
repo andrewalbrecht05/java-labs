@@ -5,7 +5,7 @@ import java.util.HashMap;
 /**
  * Клас, що представляє музиканта, який може грати на різних музичних інструментах.
  */
-public class Musician {
+public class Musician implements IMusician{
     private final HashMap<String, IMInstrument> instruments;
 
     /**
@@ -20,6 +20,7 @@ public class Musician {
      *
      * @param instrument Новий музичний інструмент.
      */
+    @Override
     public void addInstrument(IMInstrument instrument) {
         instruments.put(instrument.getClass().getName(),instrument);
     }
@@ -47,6 +48,7 @@ public class Musician {
      * Відтворює звук усіх музичних інструментів, якими володіє музикант.
      * Якщо музикант не має інструментів, виводить повідомлення про це.
      */
+    @Override
     public void playInstruments() {
         if (instruments.isEmpty()) {
             System.out.println("Музикант не вміє грати...");

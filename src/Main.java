@@ -17,7 +17,8 @@ public class Main {
         System.out.println("1. Додати новий музичний інструмент");
         System.out.println("2. Послухати гру музиканта");
         System.out.println("3. Допомога");
-        System.out.println("4. Вийти");
+        System.out.println("4. Створити нового музиканта");
+        System.out.println("5. Вийти");
         System.out.println("Доступні музичні інструменти:\n\tСкрипка(1)\n\tФортепіано(2)\n\tСинтезатор(3)");
     }
 
@@ -34,7 +35,7 @@ public class Main {
         } else {
             System.out.println("Музикант вже вміє грати на цьому інструменті!");
         }
-        System.out.println(musician.size());
+        //System.out.println(musician.size());
     }
 
     public static void main(String[] args) {
@@ -75,6 +76,10 @@ public class Main {
                     get_help();
                     break;
                 case "4":
+                    musician = new Musician();
+                    System.out.println("Успішно створено нового музиканта!");
+                    break;
+                case "5":
                     System.out.println("Вихід з програми...");
                     return;
                 default:
