@@ -1,6 +1,9 @@
 import java.util.Random;
 import java.util.Scanner;
 
+/**
+ * Клас, що реалізує гру "Вгадай число".
+ */
 public class GuessingGame {
 
     private static final int MIN_VALUE = 1;
@@ -11,6 +14,10 @@ public class GuessingGame {
     private boolean isGameOver;
     private static Scanner scanner;
 
+    /**
+     * Конструктор класу {@code GuessingGame}.
+     * Ініціалізує випадкове число, кількість спроб та сканер для введення користувача.
+     */
     public GuessingGame() {
         randomNumber = generateRandomNumber();
         remainingAttempts = 10;
@@ -18,17 +25,32 @@ public class GuessingGame {
         scanner = new Scanner(System.in);
     }
 
+    /**
+     * Метод для початку гри.
+     * Користувач може вводити свої догадки, доки гра не закінчиться.
+     */
     public void playGame() {
         Player player = new Player();
         class HintGenerator {
             private int guess;
             private int randomNumber;
 
+            /**
+             * Конструктор для генератора підказок.
+             *
+             * @param guess        догадка користувача
+             * @param randomNumber випадкове число, яке потрібно вгадати
+             */
             public HintGenerator(int guess, int randomNumber) {
                 this.guess = guess;
                 this.randomNumber = randomNumber;
             }
 
+            /**
+             * Генерує підказку для користувача на основі його догадки.
+             *
+             * @return підказка для користувача
+             */
             public String generateHint() {
                 if (guess > randomNumber) {
                     return "Ваше число занадто велике. Спробуйте менше.";
@@ -59,10 +81,18 @@ public class GuessingGame {
         }
     }
 
+    /**
+     * Інтерфейс для виведення результату гри.
+     */
     interface PrinterOut {
         void print(Player player);
     }
 
+    /**
+     * Друкуються вітання переможцю.
+     *
+     * @param player переможець гри
+     */
     private void printWinner(Player player) {
         PrinterOut printer = new PrinterOut() {
             public void print(Player player) {
@@ -73,19 +103,36 @@ public class GuessingGame {
         printer.print(player);
     }
 
+    /**
+     * Генерує випадкове число в межах заданого діапазону.
+     *
+     * @return випадкове число
+     */
     private static int generateRandomNumber() {
         return Utils.getRandomNumber(MIN_VALUE, MAX_VALUE);
     }
 
+    /**
+     * Клас, що представляє гравця в грі.
+     */
     private static class Player {
         private String name;
         private int guess;
 
+        /**
+         * Конструктор класу {@code Player}.
+         * Запитує ім'я користувача.
+         */
         public Player() {
             System.out.println("Введіть ваше ім'я:");
             name = scanner.nextLine();
         }
 
+        /**
+         * Отримує догадку користувача.
+         *
+         * @return догадка користувача
+         */
         public int getGuess() {
             try {
                 guess = Integer.parseInt(scanner.nextLine());
@@ -99,15 +146,30 @@ public class GuessingGame {
             return guess;
         }
 
+        /**
+         * Повертає ім'я гравця.
+         *
+         * @return ім'я гравця
+         */
         public String getName() {
             return name;
         }
     }
 
+    /**
+     * Утилітарний клас з допоміжними методами.
+     */
     private static class Utils {
 
         private static final Random random = new Random();
 
+        /**
+         * Генерує випадкове число в межах заданого діапазону.
+         *
+         * @param min мінімальне значення діапазону
+         * @param max максимальне значення діапазону
+         * @return випадкове число
+         */
         public static int getRandomNumber(int min, int max) {
             return random.nextInt(max - min + 1) + min;
         }
