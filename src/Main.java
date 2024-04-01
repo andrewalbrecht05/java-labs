@@ -7,6 +7,9 @@ public class Main extends JFrame {
     private JLabel nameLabel, dobLabel, resultLabel;
     private JTextField nameField, dobField;
     private JButton submitButton;
+    private JMenuBar menuBar;
+    private JMenu helpMenu;
+    private JMenuItem helpMenuItem, aboutMenuItem;
 
     /**
      * Цей клас описує GUI для програми "Знак Зодіаку".
@@ -19,10 +22,21 @@ public class Main extends JFrame {
 
         initComponents();
     }
+
     /**
-    * Цей метод ініціалізує компоненти GUI.
+     * Цей метод ініціалізує компоненти GUI.
      */
     private void initComponents() {
+        menuBar = new JMenuBar();
+        helpMenu = new JMenu("Help");
+        helpMenuItem = new JMenuItem("Міні-довідка");
+        aboutMenuItem = new JMenuItem("Інформація про автора програми");
+
+        helpMenu.add(helpMenuItem);
+        helpMenu.add(aboutMenuItem);
+        menuBar.add(helpMenu);
+        setJMenuBar(menuBar);
+
         setLayout(new GridLayout(4, 2, 5, 5));
 
         nameLabel = new JLabel("Enter your name:");
@@ -46,22 +60,26 @@ public class Main extends JFrame {
             try {
                 LocalDate dob = LocalDate.parse(dobText);
                 String zodiacSign = getZodiacSign(dob.getMonth(), dob.getDayOfMonth());
-                resultLabel.setText("<html>Привіт, " + name + "! Твій знак зодіаку: " + zodiacSign + ".<br>" + "</html>");
+                resultLabel.setText("<html>Привіт, " + name + "! Твій знак зодіаку: " + getZodiacInfo(zodiacSign) + "<br>" + "</html>");
             } catch (Exception ex) {
                 resultLabel.setText("<html>Невалідний формат. Введіть дату у форматі YYYY-MM-DD.</html>");
             }
         });
+
+        helpMenuItem.addActionListener(e -> new HelpFrame().getInstance().setVisible(true));
+        aboutMenuItem.addActionListener(e -> new AboutFrame().getInstance().setVisible(true));
     }
 
+
     /**
-     * Визначає знак зодіаку та його характеристики за датою народження.
+     * Визначає знак зодіаку за датою народження.
      *
      * @param month Місяць народження
-     * @param day День народження
+     * @param day   День народження
      * @return Знак зодіаку
      */
     private String getZodiacSign(Month month, int day) {
-        String zodiacSign = switch (month) {
+        return switch (month) {
             case MARCH -> (day < 21) ? "Риби" : "Овен";
             case APRIL -> (day < 20) ? "Овен" : "Телець";
             case MAY -> (day < 21) ? "Телець" : "Близнюки";
@@ -75,6 +93,15 @@ public class Main extends JFrame {
             case JANUARY -> (day < 20) ? "Козеріг" : "Водолій";
             case FEBRUARY -> (day < 19) ? "Водолій" : "Риби";
         };
+    }
+
+    /**
+     * Надає характеристику обраного знаку зодіаку
+     *
+     * @param zodiacSign Знак зодіаку
+     * @return Характеристика знаку зодіаку
+     */
+    private String getZodiacInfo(String zodiacSign) {
         // Додамо загальну інформацію про кожен знак зодіаку
         return switch (zodiacSign) {
             case "Овен" -> zodiacSign + ": Відданий і енергійний. Завжди готовий до дії.";
@@ -92,7 +119,6 @@ public class Main extends JFrame {
             default -> "";
         };
     }
-
 
     /**
      * Запускає програму.
