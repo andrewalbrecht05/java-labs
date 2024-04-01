@@ -5,28 +5,24 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * Panel for displaying and managing a list of courses.
+ */
 public class CourseListPanel extends JPanel {
 
     private JList<Course> courseJList;
     private DefaultListModel<Course> courseListModel;
-    private JTextField courseNameTextField, courseDescriptionTextField, courseCreditsTextField;
 
+    /**
+     * Constructs the course list panel.
+     */
     public CourseListPanel() {
         courseListModel = new DefaultListModel<>();
         courseJList = new JList<>(courseListModel);
         JScrollPane scrollPane = new JScrollPane(courseJList);
-        add(scrollPane);
 
-        // Panel for buttons and text fields
-        JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new FlowLayout());
-
-        // Buttons
+        // Add button
         JButton addButton = new JButton("Add");
-        JButton loadButton = new JButton("Load");
-        JButton saveButton = new JButton("Save");
-
-        // Add button action
         addButton.addActionListener(e -> {
             String courseName = JOptionPane.showInputDialog(null, "Enter course name:");
             String courseDescription = JOptionPane.showInputDialog(null, "Enter course description:");
@@ -41,7 +37,8 @@ public class CourseListPanel extends JPanel {
             }
         });
 
-        // Save button action
+        // Save button
+        JButton saveButton = new JButton("Save");
         saveButton.addActionListener(e -> {
             try {
                 saveCoursesToFile("courses.txt");
@@ -52,7 +49,8 @@ public class CourseListPanel extends JPanel {
             }
         });
 
-        // Load button action
+        // Load button
+        JButton loadButton = new JButton("Load");
         loadButton.addActionListener(e -> {
             try {
                 loadCoursesFromFile("courses.txt");
@@ -62,12 +60,18 @@ public class CourseListPanel extends JPanel {
                 JOptionPane.showMessageDialog(null, "Error loading courses!");
             }
         });
-        add(addButton);
-        add(loadButton);
-        add(saveButton);
-        // Add buttons and input panel to main panel
-        add(inputPanel, BorderLayout.SOUTH);
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+        buttonPanel.add(addButton);
+        buttonPanel.add(loadButton);
+        buttonPanel.add(saveButton);
+        buttonPanel.add(Box.createVerticalGlue()); // Push buttons to the top
+
+        // Add the button panel to the right side using BorderLayout
+        setLayout(new BorderLayout());
         add(scrollPane, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.EAST);
     }
 
     // Method to check for valid course details
@@ -85,13 +89,6 @@ public class CourseListPanel extends JPanel {
         }
     }
 
-    // Method to clear all text fields
-    private void clearTextFields() {
-        courseNameTextField.setText("");
-        courseDescriptionTextField.setText("");
-        courseCreditsTextField.setText("");
-    }
-
     // Method to save courses to a text file
     private void saveCoursesToFile(String filename) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
@@ -102,7 +99,6 @@ public class CourseListPanel extends JPanel {
             }
         }
     }
-
 
     // Method to load courses from a text file
     private void loadCoursesFromFile(String filename) throws IOException {
@@ -120,6 +116,3 @@ public class CourseListPanel extends JPanel {
         }
     }
 }
-
-// A simple 'Course' class to store course information (Make sure you have this class)
-

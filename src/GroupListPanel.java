@@ -5,28 +5,27 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * Panel for displaying and managing a list of groups.
+ */
 public class GroupListPanel extends JPanel {
 
     private JList<String> groupJList;
     private DefaultListModel<String> groupListModel;
 
+    /**
+     * Constructs the group list panel.
+     */
     public GroupListPanel() {
         groupListModel = new DefaultListModel<>();
         groupJList = new JList<>(groupListModel);
         JScrollPane scrollPane = new JScrollPane(groupJList);
         add(scrollPane);
-
-        // Panel for buttons and text field
-        JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new FlowLayout());
-
         // Buttons
         JButton addButton = new JButton("Add");
         JButton loadButton = new JButton("Load");
         JButton saveButton = new JButton("Save");
-        add(addButton);
-        add(loadButton);
-        add(saveButton);
+
         // Add button action
         addButton.addActionListener(e -> {
             String groupName = JOptionPane.showInputDialog(null, "Enter group name:");
@@ -59,9 +58,17 @@ public class GroupListPanel extends JPanel {
             }
         });
 
-        // Add buttons and input panel to main panel
-        add(inputPanel, BorderLayout.SOUTH);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+        buttonPanel.add(addButton);
+        buttonPanel.add(loadButton);
+        buttonPanel.add(saveButton);
+        buttonPanel.add(Box.createVerticalGlue()); // Push buttons to the top
+
+        // Add the button panel to the right side using BorderLayout
+        setLayout(new BorderLayout());
         add(scrollPane, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.EAST);
     }
 
     // Method to check for valid group name

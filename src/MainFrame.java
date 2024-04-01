@@ -5,9 +5,19 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * The main frame of the Student Management System application.
+ */
 class MainFrame extends JFrame {
+    /** The desktop pane where internal frames are displayed. */
     public JDesktopPane desktopPane;
+    private JMenuBar menuBar;
+    private JMenu helpMenu;
+    private JMenuItem helpMenuItem, aboutMenuItem;
 
+    /**
+     * Constructs the main frame.
+     */
     public MainFrame() {
         setTitle("Student Management System");
         setSize(800, 600);
@@ -16,33 +26,17 @@ class MainFrame extends JFrame {
         desktopPane = new JDesktopPane();
         setContentPane(desktopPane);
 
-        JMenuBar menuBar = new JMenuBar();
-        JMenu fileMenu = new JMenu("File");
-        JMenuItem saveItem = new JMenuItem("Save");
-        saveItem.addActionListener(e -> {
-            JFileChooser fileChooser = new JFileChooser();
-            int result = fileChooser.showSaveDialog(MainFrame.this);
-            if (result == JFileChooser.APPROVE_OPTION) {
-                File file = fileChooser.getSelectedFile();
-                try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file))) {
-                    for (Component frame : desktopPane.getComponents()) {
-                        if (frame instanceof StudentListPanel) {
-                            ArrayList<Student> students = ((StudentListPanel) frame).getStudents();
-                            outputStream.writeObject(students);
-                        }
-                    }
-                    JOptionPane.showMessageDialog(MainFrame.this, "Data saved successfully!");
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(MainFrame.this, "Error saving data!");
-                }
-            }
-        });
-        fileMenu.add(saveItem);
-        JMenuItem loadItem = new JMenuItem("Load");
+        menuBar = new JMenuBar();
+        helpMenu = new JMenu("Help");
+        helpMenuItem = new JMenuItem("Міні-довідка");
+        aboutMenuItem = new JMenuItem("Інформація про автора програми");
 
-        fileMenu.add(loadItem);
-        menuBar.add(fileMenu);
+        helpMenu.add(helpMenuItem);
+        helpMenu.add(aboutMenuItem);
+        menuBar.add(helpMenu);
         setJMenuBar(menuBar);
+
+        helpMenuItem.addActionListener(e -> new HelpFrame().getInstance().setVisible(true));
+        aboutMenuItem.addActionListener(e -> new AboutFrame().getInstance().setVisible(true));
     }
 }
