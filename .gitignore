@@ -3,6 +3,7 @@
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
+postgresql-42.7.3.jar/
 
 ### Eclipse ###
 .apt_generated
