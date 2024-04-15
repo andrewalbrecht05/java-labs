@@ -16,9 +16,6 @@ class Main {
 
     public static void main(String[] args) throws IOException {
         env_load(".env");
-        System.out.println(System.getenv("DB_URL"));
-        System.out.println(System.getenv("DB_USER"));
-        System.out.println(System.getenv("DB_PASSWORD"));
         try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
             Scanner scanner = new Scanner(System.in);
             boolean running = true;
