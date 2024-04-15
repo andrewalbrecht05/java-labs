@@ -3,20 +3,23 @@ import java.sql.*;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 class Main {
-    private static final String DB_URL = "jdbc:postgresql://localhost:5432/java_task_17";
-    private static final String USER = "postgres";
-    private static final String PASSWORD = "123";
+
+    private static String DB_URL;
+    private static String DB_USER;
+    private static String DB_PASSWORD;
     private static final String EXPORT_FILE_PATH = "export.txt";
-    private static final String regex
-            = "^(\\+\\d{1,3}( )?)?((\\(\\d{3}\\))|\\d{3})[- .]?\\d{3}[- .]?\\d{4}$"
-            + "|^(\\+\\d{1,3}( )?)?(\\d{3}[ ]?){2}\\d{3}$"
-            + "|^(\\+\\d{1,3}( )?)?(\\d{3}[ ]?)(\\d{2}[ ]?){2}\\d{2}$";
+    private static final String regex = "\\+\\d{12}";
     private static final Pattern pattern = Pattern.compile(regex);
 
 
-    public static void main(String[] args) {
-        try (Connection connection = DriverManager.getConnection(DB_URL, USER, PASSWORD)) {
+    public static void main(String[] args) throws IOException {
+        env_load(".env");
+        System.out.println(System.getenv("DB_URL"));
+        System.out.println(System.getenv("DB_USER"));
+        System.out.println(System.getenv("DB_PASSWORD"));
+        try (Connection connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
             Scanner scanner = new Scanner(System.in);
             boolean running = true;
             while (running) {
@@ -34,7 +37,20 @@ class Main {
                         deleteContact(connection, scanner);
                         break;
                     case "4":
-                        displayContacts(connection);
+                        int x = 1;
+                        displayContacts(connection, x, 2);
+
+                        while (true) {
+                            String direction = scanner.nextLine();
+                            if (direction.trim().equals("l")) {
+                                x = Math.max(x - 1, 1);
+                            } else if (direction.trim().equals("r")) {
+                                x += 1;
+                            } else {
+                                break;
+                            }
+                            displayContacts(connection, x, 2);
+                        }
                         break;
                     case "5":
                         importContacts(connection);
@@ -51,6 +67,34 @@ class Main {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void env_load(String filePath) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.isBlank() || line.startsWith("#")) {
+                    continue;
+                }
+
+                String[] parts = line.split("=");
+                String key = parts[0].trim();
+                String value = parts[1].trim();
+                switch (key) {
+                    case "DB_URL":
+                        DB_URL = value;
+                        break;
+                    case "DB_USER":
+                        DB_USER = value;
+                        break;
+                    case "DB_PASSWORD":
+                        DB_PASSWORD = value;
+                        break;
+                }
+            }
+        } catch (IOException e) {
+            throw new IOException("Error reading .env file: " + e.getMessage());
         }
     }
 
@@ -105,16 +149,14 @@ class Main {
         String phoneNumber = scanner.nextLine();
         String sql = "UPDATE contacts SET name = ?, phone_number = ? WHERE id = ?";
 
-        if ( name.isBlank() && phoneNumber.isBlank() ) {
+        if (name.isBlank() && phoneNumber.isBlank()) {
             System.out.println("You must change at least one field! Try again.");
             return;
-        } else if ( name.isBlank() ) {
+        } else if (name.isBlank()) {
             sql = sql.replace("name = ?,", "");
-        }
-        else if ( phoneNumber.isBlank() ) {
+        } else if (phoneNumber.isBlank()) {
             sql = sql.replace(", phone_number = ?", "");
-        }
-        else if( !isPhoneNumberValid(phoneNumber) ) {
+        } else if (!isPhoneNumberValid(phoneNumber)) {
             System.out.println("Phone number is not valid! Try again.");
             return;
         }
@@ -139,9 +181,13 @@ class Main {
         }
     }
 
-    private static void displayContacts(Connection connection) throws SQLException {
-        String sql = "SELECT * FROM contacts";
+    private static void displayContacts(Connection connection, int page, int pageSize) throws SQLException {
+        String sql = "SELECT * FROM contacts ORDER BY id OFFSET ? LIMIT ?"; // Note the changes here
+
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, (page - 1) * pageSize);  // Calculate offset for the page
+            statement.setInt(2, pageSize);               // Set the number of records per page
+
             ResultSet resultSet = statement.executeQuery();
 
             System.out.println("+----+----------------------+----------------------+");
@@ -160,6 +206,7 @@ class Main {
         }
     }
 
+
     private static void deleteContact(Connection connection, Scanner scanner) throws SQLException {
         System.out.print("Enter ID of the contact to delete: ");
         int id = scanner.nextInt();
@@ -175,6 +222,7 @@ class Main {
             }
         }
     }
+
     private static void exportContacts(Connection connection) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(EXPORT_FILE_PATH))) {
             String sql = "SELECT name, phone_number FROM contacts";
@@ -197,7 +245,7 @@ class Main {
             while (fileScanner.hasNextLine()) {
                 String line = fileScanner.nextLine();
                 String[] parts = line.split(",");
-                if( parts.length != 2 ) {
+                if (parts.length != 2) {
                     System.out.println("Expected 2 elements in line, found " + parts.length);
                     return;
                 }
