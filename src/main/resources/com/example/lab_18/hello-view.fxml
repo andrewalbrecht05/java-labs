@@ -58,5 +58,5 @@
       </font>
    </Label>
 
-    <Label fx:id="welcomeText" />
+    <Label fx:id="welcomeText" wrapText="true" />
 </VBox>

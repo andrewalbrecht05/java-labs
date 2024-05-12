@@ -8,35 +8,33 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.Stage;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
+
+import org.apache.commons.io.FilenameUtils;
+
 
 public class HelloController {
     @FXML
     public TextField fileFormat;
     @FXML
     public Button chooseDirButton;
+    @FXML
     public Label selectedDir;
 
     private String absolutePath;
-    private final int MAX_THREADS = 100;
+    private final int MAX_THREADS = 1000;
 
     private CopyOnWriteArrayList<File> foundFiles = new CopyOnWriteArrayList<>();
-    private ExecutorService threadPool;
 
     public void onSearchButtonClick(MouseEvent mouseEvent) {
         if (absolutePath == null || absolutePath.isEmpty()) {
-            showAlert("Warning", "Absolute path is not set");
+            showAlert("Absolute path is not set");
             return;
         }
         if (fileFormat.getText() == null || fileFormat.getText().isEmpty()) {
-            showAlert("Warning", "File format is not set");
+            showAlert("File format is not set");
             return;
         }
 
@@ -45,9 +43,16 @@ public class HelloController {
 
         foundFiles.clear();
 
-        threadPool = Executors.newFixedThreadPool(MAX_THREADS);
+        ExecutorService threadPool = Executors.newFixedThreadPool(MAX_THREADS);
 
-        searchFiles(rootDir, format);
+        searchFiles(rootDir, format.trim(), threadPool);
+
+        try {
+            threadPool.awaitTermination(2 , TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            threadPool.shutdownNow();
+            e.printStackTrace();
+        }
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Found Files");
@@ -60,33 +65,28 @@ public class HelloController {
 
         alert.setContentText(fileList.toString());
         alert.showAndWait();
-
-        System.out.println("Found files:");
-        for (File file : foundFiles) {
-            System.out.println(file.getAbsolutePath());
-        }
-
     }
 
-    private void searchFiles(File dir, String format) {
+    private void searchFiles(File dir, String format, ExecutorService threadPool) {
         File[] files = dir.listFiles();
-
         if (files == null) {
             return;
         }
+        //System.out.println("DIRECTORY: " + dir.getAbsolutePath());
         for (File file : files) {
             if (file.isDirectory()) {
-                threadPool.submit(() -> searchFiles(file, format));
+                threadPool.submit(() -> searchFiles(file, format, threadPool));
+                //new Thread(() -> searchFiles(file, format)).start();
                 //searchFiles(file,format);
-            } else if (file.getName().endsWith(format)) {
+            } else if (FilenameUtils.getExtension(file.getName()).equals(format)) {
+                System.out.println(file.getAbsolutePath());
                 foundFiles.add(file);
             }
         }
     }
 
-    private void showAlert(String title, String message) {
+    private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
-        //alert.setTitle(title);
         alert.setContentText(message);
         alert.showAndWait();
     }
