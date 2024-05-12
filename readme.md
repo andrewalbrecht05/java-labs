@@ -17,7 +17,9 @@
 
 ** Фото ** 
 1. Основне меню програми:
+
    ![Example 1](img/example1.png)
 
 2. Вигляд після виконання:
+
    ![Example 2](img/example2.png)
