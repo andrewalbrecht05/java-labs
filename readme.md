@@ -24,6 +24,6 @@
 
 **Фото**
 1. Основне меню програми:
-   ![Example 1](img/example1.png)
+   ![Example 1](img/Example1.png)
 2. Інтерфейс додавання контакту до бази даних
-   ![Example 3](img/example2.png)
+   ![Example 3](img/Example2.png)
